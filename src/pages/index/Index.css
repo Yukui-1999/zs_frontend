@@ -1,0 +1,32 @@
+.logo {
+  height: 32px;
+  margin: 16px;
+  background:#001529;
+  font-size: 20px;
+  color: rgb(255, 255, 255);
+  text-align: center;
+  line-height: 32px;
+}
+  .site-layout-background {
+    background: #001529;
+    padding: 10px,10px,10px,10px;
+  }
+  .content-layout-background{
+    background: #fff;
+    padding: 10px,10px,10px,10px;
+  }
+  #exitBtn{
+    position: absolute;
+    top:16px;
+    right: 2%;
+}
+#changepwd{
+  position: absolute;
+  top:16px;
+  right: 10%;
+}
+#username{
+  position: absolute;
+  top:0px;
+  right: 20%;
+}

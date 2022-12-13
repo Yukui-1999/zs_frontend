@@ -1,12 +1,71 @@
 import React,{ useState } from "react";
 
-import { Table, Tag, Space ,Input} from 'antd';
+import { Table, Tag, Space ,Input,message, Button,Spin} from 'antd';
 import axios from 'axios'
 import { Link} from 'react-router-dom';
 const { Search } = Input;
 class allmachine extends React.Component{
-    
-     onSearch = (value) => console.log(value);
+    state={
+      data:[],
+      spin:true,
+    }
+    todetail =e =>{
+      console.log(e)
+      this.props.history.push({ pathname : '/index/detail' , state : { 
+        id : e ,
+      }})
+    }
+     onSearch = (value) =>{
+      let that=this
+      console.log(value)
+      console.log(value===''?1:0)
+      if(value===''){
+       
+        let data
+        axios.post('http://localhost:8080/index/machinemanage', {
+            msg:111
+        })
+          .then(function (response) {
+            console.log(response)
+             data = response.data
+                if (response.status !== 200){
+                    message.error('出现问题,请联系管理员',3)
+                }
+                else{
+                  console.log(data.data)
+                }
+
+          }).then(()=>{
+            this.setState({
+                data:data.data,
+                
+            })
+          })
+      }
+      else{
+        let data
+        axios.post('http://localhost:8080/index/machinesearch', {
+            id:value
+        })
+          .then(function (response) {
+            console.log(response)
+             data = response.data
+                if (response.status !== 200){
+                    message.error('出现问题,请联系管理员',3)
+                }
+                else if(response.data.data==='notfind'){
+                  message.error('不存在该工程机械',3)
+                }
+                else{
+                  console.log(data.data)
+                  that.setState({
+                    data:data.data,
+                })
+                }
+
+          })
+      }
+     } 
      columns = [
         {
           title: '工程机械编号',
@@ -29,60 +88,33 @@ class allmachine extends React.Component{
           title: '详情',
           key: 'detail',
           dataIndex: 'detail',
-          render: (text) => <Link to="/index/detail">{text}</Link>,
+          render: (text,record) => <Button onClick={this.todetail.bind(record.id,record.id)} >{'查看'}</Button>,
         },
         
       ];
-     data = [
-        {
-          id: '1',
-          name: '机械1号',
-          detail: '查看',
-          state: 'normal',
-        },
-        {
-          id: '2',
-          name: '机械2号',
-          detail: '查看',
-          state: 'normal',
-        },
-        {
-          id: '3',
-          name: '机械3号',
-          detail: '查看',
-          state: 'normal',
-        },
-        {
-            id: '3',
-            name: '机械3号',
-            detail: '查看',
-            state: 'normal',
-          },
-          {
-            id: '4',
-            name: '机械4号',
-            detail: '查看',
-            state: 'normal',
-          },
-          {
-            id: '5',
-            name: '机械5号',
-            detail: '查看',
-            state: 'normal',
-          },
-          {
-            id: '6',
-            name: '机械6号',
-            detail: '查看',
-            state: 'normal',
-          },
-          {
-            id: '7',
-            name: '机械7号',
-            detail: '查看',
-            state: 'abnormal',
-          },
-      ];
+      componentDidMount(){
+        console.log(this.data)
+        let data
+        axios.post('http://localhost:8080/index/machinemanage', {
+            msg:111
+        })
+          .then(function (response) {
+            console.log(response)
+             data = response.data
+                if (response.status !== 200){
+                    message.error('出现问题,请联系管理员',3)
+                }
+                else{
+                  console.log(data.data)
+                }
+
+          }).then(()=>{
+            this.setState({
+                data:data.data,
+                spin:false,
+            })
+          })
+      }
     render(){
       
         return(
@@ -97,7 +129,9 @@ class allmachine extends React.Component{
                 <Search placeholder="input search id"style={{width:'300px'}}size='large' onSearch={this.onSearch} enterButton />
             </div>
             <br/>
-            <Table columns={this.columns} dataSource={this.data} />
+            <Spin spinning={this.state.spin}>
+              <Table columns={this.columns} dataSource={this.state.data} />
+            </Spin>
            </div>
                
                 

@@ -1,10 +1,19 @@
 import React,{ useState } from "react";
 
-import { Table, Tag, Space ,Input, Row,Col, Button,Image,Divider} from 'antd';
+import { Table, Tag, Space ,Input, Row,Col, Button,Image,Divider,message} from 'antd';
 import axios from 'axios'
 import { Link} from 'react-router-dom';
 import * as echarts from 'echarts'; 
 class detail extends React.Component{
+    state={
+      id:this.props.location.state.id,
+      intro:'',
+      imgurl:'',
+      sensor:'',
+      name:'',
+    }
+
+
     gridStyle = {
         width: '25%',
         textAlign: 'center',
@@ -27,11 +36,33 @@ class detail extends React.Component{
       }
     
       componentDidMount(){  
-      let that=this
+        let that=this
+        console.log('id is '+this.state.id)
+        let machinedata
+        axios.post('http://localhost:8080/index/machinedetail', {
+            id:this.state.id
+        })
+          .then(function (response) {
+            console.log(response)
+            machinedata = response.data
+            that.setState({
+              intro:machinedata.data.intro,
+              name:machinedata.data.name,
+              sensor:machinedata.data.sensor,
+              imgurl:machinedata.data.imgurl,
+          })
+                if (response.data.msg !=='success'){
+                    message.error('出现问题,请联系管理员',3)
+                }
+                else{
+                  console.log(machinedata.data)
+                }
+          })
+
+      
       for (var i = 0; i < 500; i++) {
         this.data.push(this.randomData());
       }
-      
         var mychart1 = echarts.init(document.getElementById('line1'))             
         var option1 = {
           title: {
@@ -109,8 +140,7 @@ class detail extends React.Component{
         }, 1000);
         option1&&mychart1.setOption(option1)
   
-  
-  
+
     }          
     render(){
         return(
@@ -118,18 +148,18 @@ class detail extends React.Component{
                 <Row>
                 <Col span={12} style={{textAlign:'center'}}>
                     <br/><br/>
-                   <div style={{fontSize:'32px'}}>水泥搅拌车1号</div>
+                   <div style={{fontSize:'32px'}}>{this.state.name}</div>
                    <br/><br/><br/>
-                   <div style={{fontSize:'18px'}}>工程机械的简要介绍：名称，作用，所处地点等信息</div>
+                   <div style={{fontSize:'18px'}}>{this.state.intro}</div>
                    <br/>
-                   <div style={{fontSize:'18px'}}>安置的传感器种类：三轴加速，陀螺仪，等</div>
+                   <div style={{fontSize:'18px'}}>{this.state.sensor}</div>
                    <br/>
                    <Button type="primary" ghost size="large">下载近期原始数据</Button>
 
                 </Col>
                 <Col span={12} style={{textAlign:'center'}}>
                     <br/> <br/>
-                    <Image style={{width:'500px',height:'300px'}}  src={require('../image/yangli.jpg')}></Image>
+                    <Image style={{width:'500px',height:'300px'}}  src={this.state.imgurl}></Image>
                 </Col>
                 </Row>
                 <br/>

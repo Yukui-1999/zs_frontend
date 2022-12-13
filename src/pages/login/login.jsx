@@ -58,33 +58,34 @@ class Login extends Component {
 
     //处理表单请求
     handleSubmit = () => {
-        cookie.save('username', this.state.username, { path: '/' });
-        cookie.save('loginSuccess', true, { path: '/' });
+        // cookie.save('username', this.state.username, { path: '/' });
+        // cookie.save('loginSuccess', true, { path: '/' });
                   
-        window.location.href = '/index';
-        // let that = this
-        // const {username, password} = that.state
-        // if (username === '' && password === '') return
-        // axios.post('http://localhost:9000/login', {
-        //     username:username,
-        //     password:password,
-        // })
-        //     .then(function (response) {
-        //         const data = response.data
-        //         const result = data.status
-        //         if (result === 'success'){
-        //             cookie.save('username', that.state.username, { path: '/' });
-        //             cookie.save('loginSuccess', true, { path: '/' });
-        //             cookie.save('email', data.email, {path:'/'});
-        //             window.location.href = '/index';
-        //         }
-        //         else{
-        //             message.warning('账号或密码错误', 2)
-        //         }
-        //     })
-        //     .catch(function (error) {
-        //         console.log(error);
-        //     });
+        // window.location.href = '/index';
+        let that = this
+        const {username, password} = that.state
+        if (username === '' && password === '') return
+        axios.post('http://localhost:8080/login', {
+            username:username,
+            password:password,
+        })
+            .then(function (response) {
+                console.log(response)
+                const data = response.data
+                const result = data.data
+                if (result === 'success'){
+                    cookie.save('username', that.state.username, { path: '/' });
+                    cookie.save('loginSuccess', true, { path: '/' });
+                    cookie.save('usertype',data.msg,{path:'/'})
+                    window.location.href = '/index';
+                }
+                else{
+                    message.warning('账号或密码错误', 2)
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     }
 
     //跳转注册界面
@@ -105,12 +106,14 @@ class Login extends Component {
                     <Form
                         name="normal_login"
                         className="trueForm"
+                        onFinish={this.handleSubmit}
                         initialValues={{
                             remember: true,
                         }}
                     >
                         <Form.Item
                             name="usename"
+                           
                             rules={[
                                 {
                                     required: true,
@@ -118,9 +121,9 @@ class Login extends Component {
                                     trigger: 'blur'
                                 },
                                 {
-                                    min: 6,
+                                    min: 4,
                                     max: 18,
-                                    message: '用户名长度应为6-18个字符',
+                                    message: '用户名长度应为4-18个字符',
                                     trigger: 'blur'
                                 }
                             ]}
@@ -128,7 +131,8 @@ class Login extends Component {
                             <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="用户名" onChange={this.handleUsername}/>
                         </Form.Item>
                         <Form.Item
-                            name="password"
+                            name="pwd"
+                            
                             rules={[
                                 {
                                     required: true,
@@ -155,10 +159,10 @@ class Login extends Component {
                             </Modal>
                         </Form.Item>
 
-                        <Form.Item id='buttons'>
+                        <Form.Item id='buttons' name='bt'>
                             <div className='myBtn'>
                                 <Button type="primary" htmlType="submit" className="login-form-button"
-                                        onClick = {this.handleSubmit}>
+                                       >
                                     登录
                                 </Button>
                                

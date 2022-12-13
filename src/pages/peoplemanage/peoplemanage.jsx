@@ -1,10 +1,10 @@
 import React,{ useState } from "react";
 
-import { Table,Form,Input,Radio,Button,Image,Modal} from 'antd';
+import { Table,Form,Input,Radio,Button,message,Modal,Spin} from 'antd';
 import axios from 'axios'
 import { Link} from 'react-router-dom';
 import * as echarts from 'echarts'; 
-import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
+import { EyeInvisibleOutlined, LockOutlined ,UserOutlined} from '@ant-design/icons';
 class peoplemanage extends React.Component{
     state = {
         ModalOpen:false,
@@ -13,43 +13,92 @@ class peoplemanage extends React.Component{
         comfirmopen1:false,
         ModalOpen2:false,
         comfirmopen2:false,
+        data:[],
+        updateusername:'',
+        deleteusername:'',
+        createusername:'',
+        createpwd:'',
+        createtype:'',
+        spin:true,
     }
     isModalOpen = e =>{
         this.setState({ModalOpen:true})
     }
     handleOk = e =>{
-        
-       
+        let that=this
         this.setState({comfirmopen:true})
-    setTimeout(() => {
-        this.setState({ModalOpen:false})
-        this.setState({comfirmopen:false})
-    }, 2000);
+        console.log(this.state.deleteusername)
+        axios.post('http://localhost:8080/index/deleteuser', {
+            username:this.state.deleteusername
+        })
+          .then(function (response) {
+            that.setState({
+                ModalOpen:false,
+                comfirmopen:false
+            })
+            console.log(response)
+                if (response.data.msg === 'fail'){
+                    message.error('删除失败,请联系管理员',3)
+                }
+                else{
+                  message.success('删除成功')
+                  setTimeout(() => {
+                    window.location.reload()
+                }, 1000);
+                }
+
+          })
+
+
+
+    
     }
     handleCancel = e =>{
         this.setState({ModalOpen:false})
     }
     showModal = e =>{
-        this.setState({ModalOpen:true})
+        console.log(e)
+        this.setState({
+            ModalOpen:true,
+            deleteusername:e
+        })
     }
 
     isModalOpen1 = e =>{
         this.setState({ModalOpe1:true})
     }
     handleOk1 = e =>{
-        
-       
+        let that=this
         this.setState({comfirmopen1:true})
-    setTimeout(() => {
-        this.setState({ModalOpen1:false})
-        this.setState({comfirmopen1:false})
-    }, 2000);
+        console.log(this.state.updateusername)
+        axios.post('http://localhost:8080/index/resetpwd', {
+            username:this.state.updateusername
+        })
+          .then(function (response) {
+            that.setState({
+                ModalOpen1:false,
+                comfirmopen1:false
+            })
+            console.log(response)
+                if (response.data.msg === 'fail'){
+                    message.error('重置失败,请联系管理员',3)
+                }
+                else{
+                  message.success('重置成功')
+                }
+
+          })
+   
     }
     handleCancel1 = e =>{
         this.setState({ModalOpen1:false})
     }
     showModal1 = e =>{
-        this.setState({ModalOpen1:true})
+        console.log(e)
+        this.setState({
+            ModalOpen1:true,
+            updateusername:e,
+        })
     }
 
     isModalOpen2 = e =>{
@@ -57,12 +106,34 @@ class peoplemanage extends React.Component{
     }
     handleOk2 = e =>{
         
-       
+       let that=this
         this.setState({comfirmopen2:true})
-    setTimeout(() => {
-        this.setState({ModalOpen2:false})
-        this.setState({comfirmopen2:false})
-    }, 2000);
+        axios.post('http://localhost:8080/index/createuser', {
+            username:this.state.createusername,
+            password:this.state.createpwd,
+            type:this.state.createtype,
+        })
+          .then(function (response) {
+            that.setState({
+                ModalOpen2:false,
+                comfirmopen2:false
+            })
+            console.log(response)
+                if (response.data.msg === 'success'){
+                    message.success('创建成功',3)
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 1000);
+                }
+                else if(response.data.msg === 'reuse'){
+                    message.info('用户名已存在,更换用户名')
+                }
+                else{
+                  message.success('创建失败')
+                }
+
+          })
+    
     }
     handleCancel2 = e =>{
         this.setState({ModalOpen2:false})
@@ -83,7 +154,11 @@ class peoplemanage extends React.Component{
           dataIndex: 'usertype',
           key: 'usertype',
           width: '30%',
-          align:'center'
+          align:'center',
+          render:(text)=>
+          <div>
+           {text==="1"?"管理员":"普通监管者"}
+          </div>
         },
         {
           title: '操作',
@@ -91,14 +166,14 @@ class peoplemanage extends React.Component{
           key: 'op',
           width:'40%',
           align:'center',
-          render:(text) =>
+          render:(text,record) =>
           <div>
-            <Button onClick={this.showModal1}>
+            <Button onClick={this.showModal1.bind(record.username,record.username)}>
             {text[0]}
             </Button>
             &nbsp;&nbsp;
             {text.length===2?
-                <Button danger onClick={this.showModal}>
+                <Button danger onClick={this.showModal.bind(record.username,record.username)}>
             {text[1]}
           </Button>:<div></div>
             }
@@ -109,29 +184,48 @@ class peoplemanage extends React.Component{
      
         
       ];
-     data = [
-        {
-          username: 'aaa',
-          usertype: '普通监管者',
-          op: ['重置密码','删除用户'],
-        },
-         {
-          username: 'bbb',
-          usertype: '普通监管者',
-          op: ['重置密码','删除用户'],
-        },
-        {
-            username: 'ccc',
-            usertype: '普通监管者',
-            op: ['重置密码','删除用户'],
-          },
-          {
-            username: 'manager',
-            usertype: '管理员',
-            op: ['重置密码'],
-          },
-         
-      ];
+       
+      componentDidMount(){
+        console.log(this.data)
+        let data
+        axios.post('http://localhost:8080/index/peoplemanage', {
+            msg:111
+        })
+          .then(function (response) {
+            console.log(response)
+             data = response.data
+                if (response.status !== 200){
+                    message.error('出现问题,请联系管理员',3)
+                }
+                else{
+                  console.log(data.data)
+                }
+
+          }).then(()=>{
+            this.setState({
+                spin:false,
+                data:data.data,
+            })
+          })
+      }
+      handleusername=e=>{
+        console.log(e.target.value)
+        this.setState({
+            createusername:e.target.value
+        })
+      }
+      handlepassword=e=>{
+        console.log(e.target.value)
+        this.setState({
+            createpwd:e.target.value
+        })
+      }
+      handletype=e=>{
+        console.log(e.target.value)
+        this.setState({
+            createtype:e.target.value
+        })
+      }
     render(){
         
         return(
@@ -145,7 +239,15 @@ class peoplemanage extends React.Component{
             
             </div>
             <br/>
-            <Table columns={this.columns} dataSource={this.data} />
+         
+            
+            
+            <Spin spinning={this.state.spin}>
+                <Table columns={this.columns} dataSource={this.state.data}/> 
+            </Spin>
+         
+    
+            
             <div style={{textAlign:'center'}}>
                 <Button onClick={this.showModal2}  type="primary" size="large" width='100px'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;添加用户&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</Button>
                 <Modal title="提示" 
@@ -173,38 +275,69 @@ class peoplemanage extends React.Component{
 
                 <Modal title="添加用户" 
                 open={this.state.ModalOpen2}
-                onOk={this.handleOk2}
-                okText='添加'
-                cancelText='取消'
-                confirmLoading={this.state.comfirmopen2}
                 onCancel={
                     this.handleCancel2}
+                footer={null}
                 >
+                
                  <div>
                     <Form
-                    labelCol={{
-                        span: 4,
-                      }}
-                      wrapperCol={{
-                        span: 14,
-                      }}
-                      layout="horizontal">
-                        <br/>
-                        <Form.Item label="账号">
-                        <Input />
+                      layout="horizontal"
+                      name="form"
+                      onFinish={this.handleOk2}
+                      >
+                        <Form.Item label="账号"
+                        name='user'
+                        initialValues={{ remember: true }}
+                        rules={[
+                            {
+                                required: true,
+                                message: '请输入要创建的用户名!',
+                                trigger: 'blur'
+                            },
+                            {
+                                min: 4,
+                                max: 18,
+                                message: '用户名长度应为4-18个字符',
+                                trigger: 'blur'
+                            }
+                        ]}
+                        >
+                        <Input  onChange={this.handleusername}/>
                         </Form.Item>
-                        <Form.Item label="密码">
+                        <Form.Item label="密码"
+                        initialValues={{ remember: true }}
+                        name='password'
+                        rules={[
+                            {
+                                required: true,
+                                message: '请输入要创建的密码!',
+                            },
+                        ]}>
                         <Input.Password
-                            placeholder="input password"
-                            iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
-                        />
+                                prefix={<LockOutlined />}
+                                type="password"
+                
+                                onChange={this.handlepassword}
+                            />
                         </Form.Item>
-                        <Form.Item label="用户类型">
-                        
-                            <Radio.Group>
-                                <Radio value="apple"> 管理员 </Radio>
-                                <Radio value="pear"> 普通监管者 </Radio>
+                        <Form.Item label="用户类型"
+                        name='type'
+                        rules={[
+                            {
+                                required: true,
+                                message: '请选择要创建的用户类型!',
+                            },
+                        ]}>
+                            <Radio.Group onChange={this.handletype}>
+                                <Radio value="1"> 管理员 </Radio>
+                                <Radio value="0"> 普通监管者 </Radio>
                             </Radio.Group>
+                        </Form.Item>
+                        <Form.Item style={{textAlign:'center'}}>
+                            <Button type="primary" htmlType="submit" >
+                            创建
+                            </Button>
                         </Form.Item>
                     </Form>
                  </div>

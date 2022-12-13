@@ -1,7 +1,7 @@
 import React from "react";
 import { Layout, Menu,Button,message,Form,Modal,Input } from 'antd';
 import {Route, Switch, Redirect, Link} from 'react-router-dom';
-import {PieChartOutlined,DatabaseOutlined,UserOutlined,EyeInvisibleOutlined,EyeTwoTone} from '@ant-design/icons';
+import {PieChartOutlined,DatabaseOutlined,UserOutlined,EyeInvisibleOutlined,EyeTwoTone,LockOutlined} from '@ant-design/icons';
 import homepage from "../homepage/homepage";
 import "./Index.css"
 import 'antd/dist/reset.css';
@@ -11,6 +11,7 @@ import detail from "../detail/detail";
 import showdata from "../showdata/showdata";
 import peoplemanage from "../peoplemanage/peoplemanage";
 import adddelete from "../adddelete/adddelete";
+import axios from "axios";
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
 class Index extends React.Component {
@@ -19,10 +20,12 @@ class Index extends React.Component {
     username:cookie.load('username'),
     ModalOpen2:false,
     comfirmopen2:false,
-    
-  
+    oldpwd:'',
+    newpwd:'',
+    type:cookie.load('usertype'),
   };
   componentDidMount () {
+    console.log(this.state.type)
     const success = cookie.load('loginSuccess')
     if (success !== undefined) {
         message.success('登陆成功。欢迎您，' + this.state.username, 5)
@@ -47,7 +50,7 @@ class Index extends React.Component {
   handleLoginOut = () => {
       cookie.remove('username', { path: '/' })
       cookie.remove('loginSuccess', { path: '/' })
-      cookie.remove('email', {path:'/'})
+      cookie.remove('type', {path:'/'})
       window.location.href = '/login'
   }
   changePage = name => {
@@ -75,24 +78,153 @@ handleCancel2 = e =>{
 showModal2 = e =>{
     this.setState({ModalOpen2:true})
 }
+repeatPwd = (rule, value) => {
+  if (value && value !== this.state.newpwd) return Promise.reject('两次密码不一致')
+  return Promise.resolve()
+}
+handleOldPassword= e =>{
+  this.setState({
+    oldpwd:e.target.value
+  })
+}
+handleNewPassword =e =>{
+this.setState({
+  newpwd:e.target.value
+})
+}
+handlesubmit=e=>{
+//   this.setState({comfirmopen2:true})
+// setTimeout(() => {
+//     this.setState({ModalOpen2:false})
+//     this.setState({comfirmopen2:false})
+// }, 2000);
+
+
+  let that=this
+  this.setState({comfirmopen2:true})
+  axios.post('http://localhost:8080/index/changepwd', {
+      username:this.state.username,
+      oldpwd:this.state.oldpwd,
+      newpwd:this.state.newpwd,
+  })
+    .then(function (response) {
+      that.setState({
+          ModalOpen2:false,
+          comfirmopen2:false
+      })
+      console.log(response)
+          if (response.data.msg === 'success'){
+              message.success('修改成功',3)
+           
+          }
+          else if(response.data.msg === 'oldpwderror'){
+            message.error('原始密码错误')
+          }
+          else{
+            message.error('修改失败,请联系管理员')
+          }
+
+    })
+
+}
   
   render() {
   
     const { collapsed } = this.state;
     return (
-      
-      <Layout style={{ minHeight: '100vh' }}>
-        <Modal title="添加用户" 
+      <div>
+        <Modal title="修改密码" 
+                open={this.state.ModalOpen2}
+                footer={null}
+                onCancel={this.handleCancel2}
+                >
+                 
+                    <Form
+                    name="form11"
+                    onFinish={this.handlesubmit}
+                    layout="horizontal"
+                    >
+                      
+                        <Form.Item 
+                        label="旧密码"
+                        initialValues={{ remember: true }}
+                        name='oldpwd'
+                        rules={[
+                          {
+                              required: true,
+                              message: '请输入旧密码',
+                          },
+                        
+                      ]}>
+                        <Input.Password
+                            prefix={<LockOutlined />}
+                            type="password"
+                            placeholder="旧密码"
+                            onChange={this.handleOldPassword}
+                        />
+                        </Form.Item> 
+                         <Form.Item label="新密码"
+                        name='password1'
+                        rules={[
+                          {
+                              required: true,
+                              message: '请输入新密码',
+                          },
+                        
+                      ]}>
+                        <Input.Password
+                            prefix={<LockOutlined />}
+                            type="password"
+                            placeholder="新密码"
+                            onChange={this.handleNewPassword}
+                        />
+                        </Form.Item> 
+
+                         <Form.Item
+                        label="确认新密码"
+                        name="password2"
+                        rules={[
+                            {
+                                required: true,
+                                message: '请再次确认密码',
+                            },
+                            {
+                                validator: this.repeatPwd
+                            }
+                        ]}
+                    >
+                        <Input.Password
+                            prefix={<LockOutlined className="site-form-item-icon"/>}
+                            type="password"
+                            placeholder="确认新密码"
+                            onChange={e => this.verifyPwd = e.target.value}
+                        />
+                    </Form.Item>
+                    <Form.Item name='btt' style={{textAlign:'center'}}>
+                        
+                            
+
+                            <Button type="primary" htmlType="submit"  >
+                                修改密码
+                            </Button>
+                      
+                    </Form.Item> 
+                     </Form> 
+                 
+                </Modal>
+
+
+                {/* <Modal title="添加用户" 
                 open={this.state.ModalOpen2}
                 onOk={this.handleOk2}
-                okText='修改'
-                cancelText='取消'
-                confirmLoading={this.state.comfirmopen2}
+                footer={null}
                 onCancel={
                     this.handleCancel2}
                 >
                  <div>
                     <Form
+                    name="formmmmm1"
+                    onFinish={this.handlesubmit}
                     labelCol={{
                         span: 4,
                       }}
@@ -113,10 +245,30 @@ showModal2 = e =>{
                             iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
                         />
                         </Form.Item>
-                        
+                        <Form.Item label="密码确认"
+                        rules={[
+                          {
+                              required: true,
+                              message: '请再次确认密码',
+                          },
+                          {
+                              validator: this.repeatPwd
+                          }
+                      ]}>
+                        <Input.Password
+                            placeholder="input password"
+                            iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+                        />
+                        </Form.Item>
+                        <Form.Item>
+                        <Button type="primary" htmlType="submit" className="login-form-button" >
+                                修改密码
+                            </Button>
+                        </Form.Item>
                     </Form>
                  </div>
-                </Modal>
+                </Modal> */}
+      <Layout >
         <Sider collapsible collapsed={collapsed} onCollapse={this.onCollapse}>
           <div className="logo">工程机械监管平台</div>
           <Menu theme="dark"  mode="inline" selectedKeys={this.props.location.pathname}
@@ -132,26 +284,31 @@ showModal2 = e =>{
                 </Link>
             </Menu.Item>
             <Menu.Item key="/index/detail" icon={<UserOutlined />}>
-                <Link to="/index/detail">
                 详情
-                </Link>
             </Menu.Item>
             <Menu.Item key="/index/showdata" icon={<UserOutlined />}>
                 <Link to="/index/showdata">
                 数据展示
                 </Link>
             </Menu.Item>
-            <Menu.Item key="/index/peoplemanage" icon={<PieChartOutlined />} >
-            <Link to="/index/peoplemanage">
-                人员管理
-                </Link>
-            </Menu.Item>
+            
+              {this.state.type==='0'?<></>:
+              <Menu.Item key="/index/peoplemanage" icon={<PieChartOutlined />}  >
+              <Link to="/index/peoplemanage" >
+              人员管理
+              </Link>
+              </Menu.Item>
+              }
+      
+      {this.state.type==='0'?<></>:
             <Menu.Item key="/index/adddelete" icon={<PieChartOutlined />} >
-            <Link to="/index/adddelete">
+            <Link to="/index/adddelete" >
                 设备增删
                 </Link>
             </Menu.Item>
+            }
           </Menu>
+          
         </Sider>
         <Layout className="site-layout">
           <Header className="site-layout-background"  >
@@ -179,6 +336,7 @@ showModal2 = e =>{
           <Footer style={{ textAlign: 'center' }}>Image data annotation ©2021 Created by dzy</Footer>
         </Layout>
       </Layout>
+      </div>
     );
   }
 }

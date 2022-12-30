@@ -36,7 +36,14 @@ class detail extends React.Component{
       }
     
       componentDidMount(){  
+        let lable=['静止，不转，大瓶，空瓶','逆时针转，快速，大瓶，空瓶','逆时针转，快速，大瓶，空瓶',
+      '逆时针转，慢速，大瓶，空瓶','逆时针转，慢速，大瓶，满水','逆时针转，慢速，小瓶，空瓶',
+    '逆时针转，慢速，小瓶，满水','顺时针转，快速，大瓶，空瓶','顺时针转，快速，小瓶，空瓶','顺时针转，慢速，大瓶，空瓶',
+    '顺时针转，慢速，大瓶，满水','顺时针转，慢速，小瓶，空瓶','顺时针转，慢速，小瓶，满水']
         let that=this
+        let series=[]
+        let times=[]
+        let legend=[]
         console.log('id is '+this.state.id)
         let machinedata
         axios.post('http://localhost:8080/index/machinedetail', {
@@ -45,6 +52,16 @@ class detail extends React.Component{
           .then(function (response) {
             console.log(response)
             machinedata = response.data
+            series=machinedata.line
+            times=machinedata.time
+            series.forEach(function(item,index,self){
+              item.name=lable[item.name-1]
+              legend[index]=item.name
+              item.stack='Total'
+              item.areaStyle={}
+              item.emphasis={focus:'series'}
+              item.type='line'
+            })
             that.setState({
               intro:machinedata.data.intro,
               name:machinedata.data.name,
@@ -55,90 +72,66 @@ class detail extends React.Component{
                     message.error('出现问题,请联系管理员',3)
                 }
                 else{
-                  console.log(machinedata.data)
+                  console.log(times)
+                  console.log(legend)
+                  console.log(series)
                 }
+          }).then(()=>{
+            var mychart1 = echarts.init(document.getElementById('line1'))  
+            var option1 = {
+              title: {
+                text: '工程机械状态随时间变化',
+                left: 'center'   
+              },
+              tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                  type: 'cross',
+                  label: {
+                    backgroundColor: '#6a7985'
+                  }
+                }
+              },
+              legend: {
+                data: legend,
+                top:'10%',
+              },
+              toolbox: {
+                feature: {
+                  saveAsImage: {}
+                }
+              },
+              grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                top:'20%',
+                containLabel: true
+              },
+              xAxis: [
+                {
+                  type: 'category',
+                  boundaryGap: false,
+                  data: times
+                }
+
+              ],
+              yAxis: [
+                {
+                  type: 'value'
+                }
+              ],
+              series: series
+            };
+            
+            
+            
+            option1&&mychart1.setOption(option1)
           })
 
       
-      for (var i = 0; i < 500; i++) {
-        this.data.push(this.randomData());
-      }
-        var mychart1 = echarts.init(document.getElementById('line1'))             
-        var option1 = {
-          title: {
-            text: '正常/异常随时间变化表,1正常0异常',
-            left:'center'
-          },
-          tooltip: {
-            trigger: 'axis',
-            formatter: function (params) {
-              params = params[0];
-              var date = new Date(params.name);
-              return (
-                date.getDate() +
-                '/' +
-                (date.getMonth() + 1) +
-                '/' +
-                date.getFullYear() +
-                ' : ' +
-                params.value[1]
-              );
-            },
-            axisPointer: {
-              animation: false
-            }
-          },
-          dataZoom: [
-            {
-              type: 'slider',
-              xAxisIndex: 0,
-              filterMode: 'none'
-            },
-        
-            {
-              type: 'inside',
-              xAxisIndex: 0,
-              filterMode: 'none'
-            },
-         
-          ],
-          xAxis: {
-            type: 'time',
-            splitLine: {
-              show: true
-            }
-          },
-          yAxis: {
-            type: 'value',
-            boundaryGap: [0, '100%'],
-            splitLine: {
-              show: true
-            }
-          },
-          series: [
-            {
-              name: 'Fake Data',
-              type: 'line',
-              showSymbol: false,
-              data: this.data
-            }
-          ]
-        };
-        setInterval(function () {
-          for (var i = 0; i < 5; i++) {
-            that.data.shift();
-            that.data.push(that.randomData());
-          }
-          mychart1.setOption({
-            series: [
-              {
-                data: that.data
-              }
-            ]
-          });
-        
-        }, 1000);
-        option1&&mychart1.setOption(option1)
+      
+       
   
 
     }          
@@ -154,7 +147,8 @@ class detail extends React.Component{
                    <br/>
                    <div style={{fontSize:'18px'}}>{this.state.sensor}</div>
                    <br/>
-                   <Button type="primary" ghost size="large">下载近期原始数据</Button>
+                   <a href="http://localhost:8080/index/load" download="file">下载文件</a>
+                   {/* <Button type="primary" ghost size="large">下载近期原始数据</Button> */}
 
                 </Col>
                 <Col span={12} style={{textAlign:'center'}}>
@@ -165,7 +159,7 @@ class detail extends React.Component{
                 <br/>
                 <Divider orientation="left">原始数据部分展示</Divider>
                 <br/><br/>
-                <div id="line1" style={{textAlign:'center',height:'400px',width:'1300px'}}></div>
+                <div id="line1" style={{textAlign:'center',height:'400px',width:'1150px'}}></div>
                 <div style={{textAlign:'center'}}>
                     <br/>
                     <Button size="large" type="primary" ghost>

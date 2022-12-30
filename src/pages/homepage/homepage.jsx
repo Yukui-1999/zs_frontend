@@ -42,11 +42,17 @@ class homepage extends React.Component{
     
     componentDidMount(){  
 
-    
+     let lable=['静止，不转，大瓶，空瓶','逆时针转，快速，大瓶，空瓶','逆时针转，快速，大瓶，空瓶',
+      '逆时针转，慢速，大瓶，空瓶','逆时针转，慢速，大瓶，满水','逆时针转，慢速，小瓶，空瓶',
+    '逆时针转，慢速，小瓶，满水','顺时针转，快速，大瓶，空瓶','顺时针转，快速，小瓶，空瓶','顺时针转，慢速，大瓶，空瓶',
+    '顺时针转，慢速，大瓶，满水','顺时针转，慢速，小瓶，空瓶','顺时针转，慢速，小瓶，满水']
       let that=this
       let piedata
       let machinedata
-      let total
+      let total=0
+      let times=[]
+      let series=[]
+      let legend=[]
       axios.post('http://localhost:8080/index/piedata', {
                   msg:'111'
               })
@@ -54,83 +60,91 @@ class homepage extends React.Component{
                   console.log(response)
                   machinedata = response.data
                   piedata=machinedata.data
-                  
-                  total=piedata[0].value+piedata[1].value
+                  times=machinedata.time
+                  series=machinedata.linevalue
+                  series.forEach(function(item,index,self){
+                    item.name=lable[item.name-1]
+                    legend[index]=item.name
+                    item.stack='Total'
+                    item.areaStyle={}
+                    item.emphasis={focus:'series'}
+                    item.type='line'
+                  })
+                  piedata.forEach(function(item,index,self){
+                    total+=item.value
+                  })
+             
                       if (response.data.msg !=='success'){
                           message.error('出现问题,请联系管理员',3)
                       }
                       else{
                         console.log(piedata)
+                        console.log(series)
+                        console.log(legend)
                       }
                 }).then(()=>{
                   
                     //charts begin
-                    for (var i = 0; i < 3000; i++) {
-                      this.data.push(this.randomData());
-                
-                    }
-                    console.log(piedata)
+                  
                       var mychart1 = echarts.init(document.getElementById('line'))             
                       var option1 = {
                         title: {
-                          text: '异常机械运行百分比随时间变化',
-                          left:'center'
+                          text: '各运行状态机械堆叠面积图',
+                          left: 'center'   
                         },
                         tooltip: {
                           trigger: 'axis',
-                          formatter: function (params) {
-                            params = params[0];
-                            var date = new Date(params.name);
-                            return (
-                              date.getDate() +
-                              '/' +
-                              (date.getMonth() + 1) +
-                              '/' +
-                              date.getFullYear() +
-                              ' : ' +
-                              params.value[1]
-                            );
-                          },
                           axisPointer: {
-                            animation: false
-                          }
-                        },
-                        xAxis: {
-                          type: 'time',
-                          splitLine: {
-                            show: true
-                          }
-                        },
-                        yAxis: {
-                          type: 'value',
-                          boundaryGap: [0, '100%'],
-                          splitLine: {
-                            show: true
-                          }
-                        },
-                        series: [
-                          {
-                            name: 'Fake Data',
-                            type: 'line',
-                            showSymbol: false,
-                            data: this.data
-                          }
-                        ]
-                      };
-                      setInterval(function () {
-                        for (var i = 0; i < 5; i++) {
-                          that.data.shift();
-                          that.data.push(that.randomData());
-                        }
-                        mychart1.setOption({
-                          series: [
-                            {
-                              data: that.data
+                            type: 'cross',
+                            label: {
+                              backgroundColor: '#6a7985'
                             }
-                          ]
-                        });
+                          }
+                        },
+                        legend: {
+                          data: legend,
+                          top:"6%"                                                                                  
+                        },
+                        toolbox: {
+                          feature: {
+                            saveAsImage: {}
+                          }
+                        },
+                        grid: {
+                          left: '3%',
+                          right: '4%',
+                          bottom: '15%',
+                          top:'20%',
+                          containLabel: true
+                        },
+                        dataZoom: [
+                          {
+                            type: 'slider',
+                            xAxisIndex: 0,
+                            filterMode: 'none'
+                          },
                       
-                      }, 1000);
+                          {
+                            type: 'inside',
+                            xAxisIndex: 0,
+                            filterMode: 'none'
+                          },
+                       
+                        ],
+                        xAxis: [
+                          {
+                            type: 'category',
+                            boundaryGap: false,
+                            data: times
+                          }
+                        ],
+                        yAxis: [
+                          {
+                            type: 'value'
+                          }
+                        ],
+                        series: series
+                      };
                       option1&&mychart1.setOption(option1)
                 
                 
@@ -148,7 +162,8 @@ class homepage extends React.Component{
                       },                                                                                                                 
                       legend: {                                                                                                     
                           orient: 'vertical',                                                                                      
-                          left: 'left',                                                                                                 
+                          left: 'left', 
+                          top: 'bottom'                                                                                                
                       },                                                                                                                 
                       series: [                                                                                                      
                           {                                                                                                             
@@ -201,13 +216,13 @@ class homepage extends React.Component{
                 <br/>
                 <Row>
                 <Col span={12}>
-                  <div id="main" style={{height:'400px',width:'650px'}}>
+                  <div id="main" style={{height:'425px',width:'600px'}}>
 
                   </div>
         
                 </Col>
                 <Col span={12}>
-                <div id="line" style={{height:'400px',width:'650px'}}>
+                <div id="line" style={{height:'425px',width:'600px'}}>
 
                 </div>
                 </Col>

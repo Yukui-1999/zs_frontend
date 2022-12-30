@@ -1,211 +1,1032 @@
 import React,{ useState } from "react";
 
-import { Table, Tag, Space ,Input, Row,Col, Button,Image,Divider} from 'antd';
+import { Table, Tag, Space ,Input, Row,Col, Button,Image,message} from 'antd';
 import axios from 'axios'
 import { Link} from 'react-router-dom';
 import * as echarts from 'echarts'; 
 class showdata extends React.Component{
 
-    data = [];
-    data1=[];
-    data2=[];
-
-    now = new Date(1997, 9, 3);
-    oneDay = 24 * 3600 * 1000;
-    value = Math.random() * 10;
-    value1=Math.random() * 10;
-    value2=Math.random() * 10;
-     randomData(){
-     this.now = new Date(+this.now + this.oneDay);
-     this.value = this.value + Math.random() * 0.21 - 0.1;
-     return {
-       name: this.now.toString(),
-       value: [
-         [this.now.getFullYear(), this.now.getMonth() + 1, this.now.getDate()].join('/'),
-         Math.round(this.value)
-       ]
-     };
-   }
-   randomData1(){
-    this.now = new Date(+this.now + this.oneDay);
-    this.value1 = this.value1 + Math.random() * 0.21 - 0.1;
-    return {
-      name: this.now.toString(),
-      value: [
-        [this.now.getFullYear(), this.now.getMonth() + 1, this.now.getDate()].join('/'),
-        Math.round(this.value1)
-      ]
-    };
-  }
-  randomData2(){
-    this.now = new Date(+this.now + this.oneDay);
-    this.value2 = this.value2 + Math.random() * 0.21 - 0.1;
-    return {
-      name: this.now.toString(),
-      value: [
-        [this.now.getFullYear(), this.now.getMonth() + 1, this.now.getDate()].join('/'),
-        Math.round(this.value2)
-      ]
-    };
-  }
+    
    
  
    componentDidMount(){  
+    var mychart1 = echarts.init(document.getElementById('ax'))      
+    var mychart2 = echarts.init(document.getElementById('ay'))             
+    var mychart3 = echarts.init(document.getElementById('az'))             
+    var mychart4 = echarts.init(document.getElementById('wx'))          
+    var mychart5 = echarts.init(document.getElementById('wy'))          
+    var mychart6 = echarts.init(document.getElementById('wz'))          
+    var mychart7 = echarts.init(document.getElementById('anglex'))          
+    var mychart8 = echarts.init(document.getElementById('angley'))          
+    var mychart9 = echarts.init(document.getElementById('anglez'))          
+    var mychart10 = echarts.init(document.getElementById('q0'))          
+    var mychart11 = echarts.init(document.getElementById('q1'))          
+    var mychart12 = echarts.init(document.getElementById('q2'))          
+    var mychart13 = echarts.init(document.getElementById('q3'))    
+    mychart1.showLoading({
+      text : '正在加载数据'
+    });  
+    mychart2.showLoading({
+      text : '正在加载数据'
+    }); 
+    mychart3.showLoading({
+      text : '正在加载数据'
+    }); 
+    mychart4.showLoading({
+      text : '正在加载数据'
+    }); 
+    mychart5.showLoading({
+      text : '正在加载数据'
+    }); 
+    mychart6.showLoading({
+      text : '正在加载数据'
+    }); 
+    mychart7.showLoading({
+      text : '正在加载数据'
+    }); 
+    mychart8.showLoading({
+      text : '正在加载数据'
+    }); 
+    mychart9.showLoading({
+      text : '正在加载数据'
+    }); 
+    mychart10.showLoading({
+      text : '正在加载数据'
+    }); 
+    mychart11.showLoading({
+      text : '正在加载数据'
+    }); 
+    mychart12.showLoading({
+      text : '正在加载数据'
+    }); 
+    mychart13.showLoading({
+      text : '正在加载数据'
+    }); 
+
    let that=this
-   for (var i = 0; i < 1000; i++) {
-     this.data.push(this.randomData());
-     this.data1.push(this.randomData1());
-     this.data2.push(this.randomData2());
-   }
-   
-     var mychart1 = echarts.init(document.getElementById('line2'))             
-     var option1 = {
-       title: {
-         text: '三轴加速度随时间变化',
-         left:'center'
-       },
-       legend: {
-        data: ['x', 'y','z'],
-        top:"6%"
-      },
-       tooltip: {
-         trigger: 'axis',
-         formatter: function (params) {
-           params = params[0];
-           var date = new Date(params.name);
-           return (
-             date.getDate() +
-             '/' +
-             (date.getMonth() + 1) +
-             '/' +
-             date.getFullYear() +
-             ' : ' +
-             params.value[1]
-           );
-         },
-         axisPointer: {
-           animation: false
-         }
-       },
-       xAxis: {
-         type: 'time',
-         splitLine: {
-           show: true
-         }
-       },
-       yAxis: {
-         type: 'value',
-         boundaryGap: [0, '30%'],
-         splitLine: {
-           show: true
-         }
-       },
-       dataZoom: [
-        {
-          type: 'slider',
-          xAxisIndex: 0,
-          filterMode: 'none'
-        },
-    
-        {
-          type: 'inside',
-          xAxisIndex: 0,
-          filterMode: 'none'
-        },
+    let ax,ay,az,wx,wy,wz,anglex,angley,anglez,q0,q1,q2,q3
+   axios.post('http://localhost:8080/index/showdata', {
+    msg:111
+})
+  .then(function (response) {
+    console.log(response)
      
-      ],
-       series: [
-         {
-           name: 'x',
-           type: 'line',
-           showSymbol: false,
-           data: this.data
-         },
-         {
-            name: 'y',
-            type: 'line',
-            showSymbol: false,
-            data: this.data1
-          },
-          {
-            name: 'z',
-            type: 'line',
-            showSymbol: false,
-            data: this.data2
-          }
-       ]
-     };
-     setInterval(function () {
-       for (var i = 0; i < 5; i++) {
-         that.data.shift();
-         that.data.push(that.randomData());
-         that.data1.shift();
-         that.data1.push(that.randomData1());
-         that.data2.shift();
-         that.data2.push(that.randomData2());
-       }
-       mychart1.setOption({
-         series: [
-           {
-             data: that.data
+        if (response.status !== 200){
+            message.error('出现问题,请联系管理员',3)
+        }
+        else{
+          ax=response.data.ax
+          ay=response.data.ay
+          az=response.data.az
+          wx=response.data.wx
+          wy=response.data.wy
+          wz=response.data.wz
+          anglex=response.data.anglex
+          angley=response.data.angley
+          anglez=response.data.anglez
+          q0=response.data.q0
+          q1=response.data.q1
+          q2=response.data.q2
+          q3=response.data.q3
+
+          console.log(response.data)
+          ax.forEach(function(item,index,self){
+            var now = new Date(2022,11,16,item.name[0],item.name[1],item.name[2],item.name[3])
+            item.name=now.getHours() +
+            ':' +
+            (now.getMinutes()) +
+            ':' +
+            now.getSeconds() +
+            ':' +
+            now.getMilliseconds()
+            item.value[0]=now.getTime()
+          })
+          ay.forEach(function(item,index,self){
+            var now = new Date(2022,11,16,item.name[0],item.name[1],item.name[2],item.name[3])
+            item.name=now.getHours() +
+            ':' +
+            (now.getMinutes()) +
+            ':' +
+            now.getSeconds() +
+            ':' +
+            now.getMilliseconds()
+            item.value[0]=now.getTime()
+          })
+          az.forEach(function(item,index,self){
+            var now = new Date(2022,11,16,item.name[0],item.name[1],item.name[2],item.name[3])
+            item.name=now.getHours() +
+            ':' +
+            (now.getMinutes()) +
+            ':' +
+            now.getSeconds() +
+            ':' +
+            now.getMilliseconds()
+            item.value[0]=now.getTime()
+          })
+          wx.forEach(function(item,index,self){
+            var now = new Date(2022,11,16,item.name[0],item.name[1],item.name[2],item.name[3])
+            item.name=now.getHours() +
+            ':' +
+            (now.getMinutes()) +
+            ':' +
+            now.getSeconds() +
+            ':' +
+            now.getMilliseconds()
+            item.value[0]=now.getTime()
+          })
+          wy.forEach(function(item,index,self){
+            var now = new Date(2022,11,16,item.name[0],item.name[1],item.name[2],item.name[3])
+            item.name=now.getHours() +
+            ':' +
+            (now.getMinutes()) +
+            ':' +
+            now.getSeconds() +
+            ':' +
+            now.getMilliseconds()
+            item.value[0]=now.getTime()
+          })
+          wz.forEach(function(item,index,self){
+            var now = new Date(2022,11,16,item.name[0],item.name[1],item.name[2],item.name[3])
+            item.name=now.getHours() +
+            ':' +
+            (now.getMinutes()) +
+            ':' +
+            now.getSeconds() +
+            ':' +
+            now.getMilliseconds()
+            item.value[0]=now.getTime()
+          })
+          anglex.forEach(function(item,index,self){
+            var now = new Date(2022,11,16,item.name[0],item.name[1],item.name[2],item.name[3])
+            item.name=now.getHours() +
+            ':' +
+            (now.getMinutes()) +
+            ':' +
+            now.getSeconds() +
+            ':' +
+            now.getMilliseconds()
+            item.value[0]=now.getTime()
+          })
+          angley.forEach(function(item,index,self){
+            var now = new Date(2022,11,16,item.name[0],item.name[1],item.name[2],item.name[3])
+            item.name=now.getHours() +
+            ':' +
+            (now.getMinutes()) +
+            ':' +
+            now.getSeconds() +
+            ':' +
+            now.getMilliseconds()
+            item.value[0]=now.getTime()
+          })
+          anglez.forEach(function(item,index,self){
+            var now = new Date(2022,11,16,item.name[0],item.name[1],item.name[2],item.name[3])
+            item.name=now.getHours() +
+            ':' +
+            (now.getMinutes()) +
+            ':' +
+            now.getSeconds() +
+            ':' +
+            now.getMilliseconds()
+            item.value[0]=now.getTime()
+          })
+          q0.forEach(function(item,index,self){
+            var now = new Date(2022,11,16,item.name[0],item.name[1],item.name[2],item.name[3])
+            item.name=now.getHours() +
+            ':' +
+            (now.getMinutes()) +
+            ':' +
+            now.getSeconds() +
+            ':' +
+            now.getMilliseconds()
+            item.value[0]=now.getTime()
+          })
+          q1.forEach(function(item,index,self){
+            var now = new Date(2022,11,16,item.name[0],item.name[1],item.name[2],item.name[3])
+            item.name=now.getHours() +
+            ':' +
+            (now.getMinutes()) +
+            ':' +
+            now.getSeconds() +
+            ':' +
+            now.getMilliseconds()
+            item.value[0]=now.getTime()
+          })
+          q2.forEach(function(item,index,self){
+            var now = new Date(2022,11,16,item.name[0],item.name[1],item.name[2],item.name[3])
+            item.name=now.getHours() +
+            ':' +
+            (now.getMinutes()) +
+            ':' +
+            now.getSeconds() +
+            ':' +
+            now.getMilliseconds()
+            item.value[0]=now.getTime()
+          })
+          q3.forEach(function(item,index,self){
+            var now = new Date(2022,11,16,item.name[0],item.name[1],item.name[2],item.name[3])
+            item.name=now.getHours() +
+            ':' +
+            (now.getMinutes()) +
+            ':' +
+            now.getSeconds() +
+            ':' +
+            now.getMilliseconds()
+            item.value[0]=now.getTime()
+          })
+        
+        }
+
+  }).then(()=>{
+        // charts
+       
+                
+          var option1 = {
+            title: {
+              text: 'X轴加速度随时间变化',left:'center'
+            },
+            legend: {
+             top:"6%"
            },
-           {
-            data: that.data1
-          },
-          {
-            data: that.data2
+            tooltip: {
+              trigger: 'axis',
+              formatter: function (params) {
+                params = params[0];
+                var date = params.name
+                return (
+                  date+
+                  " : "+
+                  params.value[1]
+                );
+              },
+              axisPointer: {
+                animation: false
+              }
+            },
+            xAxis: {
+              type: 'time',
+              splitLine: {
+                show: true
+              }
+            },
+            yAxis: {
+              type: 'value',
+              boundaryGap: [0, '10%'],
+              splitLine: {
+                show: true
+              }
+            },
+            dataZoom: [
+             {
+               type: 'slider',
+               xAxisIndex: 0,
+               filterMode: 'none'
+             },
+         
+             {
+               type: 'inside',
+               xAxisIndex: 0,
+               filterMode: 'none'
+             },
+           ],
+            series: [
+              {
+                name: 'x',
+                type: 'line',
+                showSymbol: false,
+                data:ax
+              },
+            ]
           }
-         ]
-       })
-       mychart2.setOption({
-        series: [
-          {
-            data: that.data
-          },
-          {
-           data: that.data1
-         },
-         {
-           data: that.data2
-         }
-        ]
-      })
-      mychart3.setOption({
-        series: [
-          {
-            data: that.data
-          },
-          {
-           data: that.data1
-         },
-         {
-           data: that.data2
-         }
-        ]
-      })
-      mychart4.setOption({
-        series: [
-          {
-            data: that.data
-          },
-          {
-           data: that.data1
-         },
-         {
-           data: that.data2
-         }
-        ]
-      })
-       ;
-     
-     }, 1000);
-     var mychart2 = echarts.init(document.getElementById('line3'))             
-     var mychart3 = echarts.init(document.getElementById('line4'))             
-     var mychart4 = echarts.init(document.getElementById('line5'))   
-     option1&&mychart1.setOption(option1)
-     option1&&mychart2.setOption(option1)
-     option1&&mychart3.setOption(option1)
-     option1&&mychart4.setOption(option1)
+
+          var option2 = {
+            title: {
+              text: 'Y轴加速度随时间变化',left:'center'
+            },
+            legend: {
+             top:"6%"
+           },
+            tooltip: {
+              trigger: 'axis',
+              formatter: function (params) {
+                params = params[0];
+                var date = params.name
+                return (
+                  date+
+                  " : "+
+                  params.value[1]
+                );
+              },
+              axisPointer: {
+                animation: false
+              }
+            },
+            xAxis: {
+              type: 'time',
+              splitLine: {
+                show: true
+              }
+            },
+            yAxis: {
+              type: 'value',
+              boundaryGap: [0, '10%'],
+              splitLine: {
+                show: true
+              }
+            },
+            dataZoom: [
+             {
+               type: 'slider',
+               xAxisIndex: 0,
+               filterMode: 'none'
+             },
+         
+             {
+               type: 'inside',
+               xAxisIndex: 0,
+               filterMode: 'none'
+             },
+           ],
+            series: [
+              {
+                name: 'x',
+                type: 'line',
+                showSymbol: false,
+                data:ay
+              },
+            ]
+          }
+
+          var option3 = {
+            title: {
+              text: 'Z轴加速度随时间变化',left:'center'
+            },
+            legend: {
+             top:"6%"
+           },
+            tooltip: {
+              trigger: 'axis',
+              formatter: function (params) {
+                params = params[0];
+                var date = params.name
+                return (
+                  date+
+                  " : "+
+                  params.value[1]
+                );
+              },
+              axisPointer: {
+                animation: false
+              }
+            },
+            xAxis: {
+              type: 'time',
+              splitLine: {
+                show: true
+              }
+            },
+            yAxis: {
+              type: 'value',
+              boundaryGap: [0, '10%'],
+              splitLine: {
+                show: true
+              }
+            },
+            dataZoom: [
+             {
+               type: 'slider',
+               xAxisIndex: 0,
+               filterMode: 'none'
+             },
+         
+             {
+               type: 'inside',
+               xAxisIndex: 0,
+               filterMode: 'none'
+             },
+           ],
+            series: [
+              {
+                name: 'x',
+                type: 'line',
+                showSymbol: false,
+                data:az
+              },
+            ]
+          }
+
+          var option4 = {
+            title: {
+              text: 'X轴角速度随时间变化',left:'center'
+            },
+            legend: {
+             top:"6%"
+           },
+            tooltip: {
+              trigger: 'axis',
+              formatter: function (params) {
+                params = params[0];
+                var date = params.name
+                return (
+                  date+
+                  " : "+
+                  params.value[1]
+                );
+              },
+              axisPointer: {
+                animation: false
+              }
+            },
+            xAxis: {
+              type: 'time',
+              splitLine: {
+                show: true
+              }
+            },
+            yAxis: {
+              type: 'value',
+              boundaryGap: [0, '10%'],
+              splitLine: {
+                show: true
+              }
+            },
+            dataZoom: [
+             {
+               type: 'slider',
+               xAxisIndex: 0,
+               filterMode: 'none'
+             },
+         
+             {
+               type: 'inside',
+               xAxisIndex: 0,
+               filterMode: 'none'
+             },
+           ],
+            series: [
+              {
+                name: 'x',
+                type: 'line',
+                showSymbol: false,
+                data:wx
+              },
+            ]
+          }
+
+          var option5 = {
+            title: {
+              text: 'Y轴角速度随时间变化',left:'center'
+            },
+            legend: {
+             top:"6%"
+           },
+            tooltip: {
+              trigger: 'axis',
+              formatter: function (params) {
+                params = params[0];
+                var date = params.name
+                return (
+                  date+
+                  " : "+
+                  params.value[1]
+                );
+              },
+              axisPointer: {
+                animation: false
+              }
+            },
+            xAxis: {
+              type: 'time',
+              splitLine: {
+                show: true
+              }
+            },
+            yAxis: {
+              type: 'value',
+              boundaryGap: [0, '10%'],
+              splitLine: {
+                show: true
+              }
+            },
+            dataZoom: [
+             {
+               type: 'slider',
+               xAxisIndex: 0,
+               filterMode: 'none'
+             },
+         
+             {
+               type: 'inside',
+               xAxisIndex: 0,
+               filterMode: 'none'
+             },
+           ],
+            series: [
+              {
+                name: 'x',
+                type: 'line',
+                showSymbol: false,
+                data:wy
+              },
+            ]
+          }
+
+          var option6 = {
+            title: {
+              text: 'Z轴角速度随时间变化',left:'center'
+            },
+            legend: {
+             top:"6%"
+           },
+            tooltip: {
+              trigger: 'axis',
+              formatter: function (params) {
+                params = params[0];
+                var date = params.name
+                return (
+                  date+
+                  " : "+
+                  params.value[1]
+                );
+              },
+              axisPointer: {
+                animation: false
+              }
+            },
+            xAxis: {
+              type: 'time',
+              splitLine: {
+                show: true
+              }
+            },
+            yAxis: {
+              type: 'value',
+              boundaryGap: [0, '10%'],
+              splitLine: {
+                show: true
+              }
+            },
+            dataZoom: [
+             {
+               type: 'slider',
+               xAxisIndex: 0,
+               filterMode: 'none'
+             },
+         
+             {
+               type: 'inside',
+               xAxisIndex: 0,
+               filterMode: 'none'
+             },
+           ],
+            series: [
+              {
+                name: 'x',
+                type: 'line',
+                showSymbol: false,
+                data:wz
+              },
+            ]
+          }
+
+          var option7 = {
+            title: {
+              text: 'X轴欧拉角随时间变化',left:'center'
+            },
+            legend: {
+             top:"6%"
+           },
+            tooltip: {
+              trigger: 'axis',
+              formatter: function (params) {
+                params = params[0];
+                var date = params.name
+                return (
+                  date+
+                  " : "+
+                  params.value[1]
+                );
+              },
+              axisPointer: {
+                animation: false
+              }
+            },
+            xAxis: {
+              type: 'time',
+              splitLine: {
+                show: true
+              }
+            },
+            yAxis: {
+              type: 'value',
+              boundaryGap: [0, '10%'],
+              splitLine: {
+                show: true
+              }
+            },
+            dataZoom: [
+             {
+               type: 'slider',
+               xAxisIndex: 0,
+               filterMode: 'none'
+             },
+         
+             {
+               type: 'inside',
+               xAxisIndex: 0,
+               filterMode: 'none'
+             },
+           ],
+            series: [
+              {
+                name: 'x',
+                type: 'line',
+                showSymbol: false,
+                data:anglex
+              },
+            ]
+          }
+
+          var option8 = {
+            title: {
+              text: 'Y轴欧拉角随时间变化',left:'center'
+            },
+            legend: {
+             top:"6%"
+           },
+            tooltip: {
+              trigger: 'axis',
+              formatter: function (params) {
+                params = params[0];
+                var date = params.name
+                return (
+                  date+
+                  " : "+
+                  params.value[1]
+                );
+              },
+              axisPointer: {
+                animation: false
+              }
+            },
+            xAxis: {
+              type: 'time',
+              splitLine: {
+                show: true
+              }
+            },
+            yAxis: {
+              type: 'value',
+              boundaryGap: [0, '10%'],
+              splitLine: {
+                show: true
+              }
+            },
+            dataZoom: [
+             {
+               type: 'slider',
+               xAxisIndex: 0,
+               filterMode: 'none'
+             },
+         
+             {
+               type: 'inside',
+               xAxisIndex: 0,
+               filterMode: 'none'
+             },
+           ],
+            series: [
+              {
+                name: 'x',
+                type: 'line',
+                showSymbol: false,
+                data:angley
+              },
+            ]
+          }
+
+          var option9 = {
+            title: {
+              text: 'Z轴欧拉角随时间变化',left:'center'
+            },
+            legend: {
+             top:"6%"
+           },
+            tooltip: {
+              trigger: 'axis',
+              formatter: function (params) {
+                params = params[0];
+                var date = params.name
+                return (
+                  date+
+                  " : "+
+                  params.value[1]
+                );
+              },
+              axisPointer: {
+                animation: false
+              }
+            },
+            xAxis: {
+              type: 'time',
+              splitLine: {
+                show: true
+              }
+            },
+            yAxis: {
+              type: 'value',
+              boundaryGap: [0, '10%'],
+              splitLine: {
+                show: true
+              }
+            },
+            dataZoom: [
+             {
+               type: 'slider',
+               xAxisIndex: 0,
+               filterMode: 'none'
+             },
+         
+             {
+               type: 'inside',
+               xAxisIndex: 0,
+               filterMode: 'none'
+             },
+           ],
+            series: [
+              {
+                name: 'x',
+                type: 'line',
+                showSymbol: false,
+                data:anglez
+              },
+            ]
+          }
+
+          var option10 = {
+            title: {
+              text: '四元数q0随时间变化',left:'center'
+            },
+            legend: {
+             top:"6%"
+           },
+            tooltip: {
+              trigger: 'axis',
+              formatter: function (params) {
+                params = params[0];
+                var date = params.name
+                return (
+                  date+
+                  " : "+
+                  params.value[1]
+                );
+              },
+              axisPointer: {
+                animation: false
+              }
+            },
+            xAxis: {
+              type: 'time',
+              splitLine: {
+                show: true
+              }
+            },
+            yAxis: {
+              type: 'value',
+              boundaryGap: [0, '10%'],
+              splitLine: {
+                show: true
+              }
+            },
+            dataZoom: [
+             {
+               type: 'slider',
+               xAxisIndex: 0,
+               filterMode: 'none'
+             },
+         
+             {
+               type: 'inside',
+               xAxisIndex: 0,
+               filterMode: 'none'
+             },
+           ],
+            series: [
+              {
+                name: 'x',
+                type: 'line',
+                showSymbol: false,
+                data:q0
+              },
+            ]
+          }
+
+          var option11 = {
+            title: {
+              text: '四元数q1随时间变化',left:'center'
+            },
+            legend: {
+             top:"6%"
+           },
+            tooltip: {
+              trigger: 'axis',
+              formatter: function (params) {
+                params = params[0];
+                var date = params.name
+                return (
+                  date+
+                  " : "+
+                  params.value[1]
+                );
+              },
+              axisPointer: {
+                animation: false
+              }
+            },
+            xAxis: {
+              type: 'time',
+              splitLine: {
+                show: true
+              }
+            },
+            yAxis: {
+              type: 'value',
+              boundaryGap: [0, '10%'],
+              splitLine: {
+                show: true
+              }
+            },
+            dataZoom: [
+             {
+               type: 'slider',
+               xAxisIndex: 0,
+               filterMode: 'none'
+             },
+         
+             {
+               type: 'inside',
+               xAxisIndex: 0,
+               filterMode: 'none'
+             },
+           ],
+            series: [
+              {
+                name: 'x',
+                type: 'line',
+                showSymbol: false,
+                data:q1
+              },
+            ]
+          }
+
+          var option12 = {
+            title: {
+              text: '四元数q2随时间变化',left:'center'
+            },
+            legend: {
+             top:"6%"
+           },
+            tooltip: {
+              trigger: 'axis',
+              formatter: function (params) {
+                params = params[0];
+                var date = params.name
+                return (
+                  date+
+                  " : "+
+                  params.value[1]
+                );
+              },
+              axisPointer: {
+                animation: false
+              }
+            },
+            xAxis: {
+              type: 'time',
+              splitLine: {
+                show: true
+              }
+            },
+            yAxis: {
+              type: 'value',
+              boundaryGap: [0, '10%'],
+              splitLine: {
+                show: true
+              }
+            },
+            dataZoom: [
+             {
+               type: 'slider',
+               xAxisIndex: 0,
+               filterMode: 'none'
+             },
+         
+             {
+               type: 'inside',
+               xAxisIndex: 0,
+               filterMode: 'none'
+             },
+           ],
+            series: [
+              {
+                name: 'x',
+                type: 'line',
+                showSymbol: false,
+                data:q2
+              },
+            ]
+          }
+
+          var option13 = {
+            title: {
+              text: '四元数q3加速度随时间变化',left:'center'
+            },
+            legend: {
+             top:"6%"
+           },
+            tooltip: {
+              trigger: 'axis',
+              formatter: function (params) {
+                params = params[0];
+                var date = params.name
+                return (
+                  date+
+                  " : "+
+                  params.value[1]
+                );
+              },
+              axisPointer: {
+                animation: false
+              }
+            },
+            xAxis: {
+              type: 'time',
+              splitLine: {
+                show: true
+              }
+            },
+            yAxis: {
+              type: 'value',
+              boundaryGap: [0, '10%'],
+              splitLine: {
+                show: true
+              }
+            },
+            dataZoom: [
+             {
+               type: 'slider',
+               xAxisIndex: 0,
+               filterMode: 'none'
+             },
+         
+             {
+               type: 'inside',
+               xAxisIndex: 0,
+               filterMode: 'none'
+             },
+           ],
+            series: [
+              {
+                name: 'x',
+                type: 'line',
+                showSymbol: false,
+                data:q3
+              },
+            ]
+          }
+          mychart1 .hideLoading(); 
+          mychart2 .hideLoading(); 
+          mychart3 .hideLoading(); 
+          mychart4 .hideLoading(); 
+          mychart5 .hideLoading(); 
+          mychart6 .hideLoading(); 
+          mychart7 .hideLoading(); 
+          mychart8 .hideLoading(); 
+          mychart9 .hideLoading(); 
+          mychart10 .hideLoading(); 
+          mychart11 .hideLoading(); 
+          mychart12 .hideLoading(); 
+          mychart13 .hideLoading(); 
+
+          option1&&mychart1.setOption(option1)
+          option2&&mychart2.setOption(option2)
+          option3&&mychart3.setOption(option3)
+          option4&&mychart4.setOption(option4)
+          option5&&mychart5.setOption(option5)
+          option6&&mychart6.setOption(option6)
+          option7&&mychart7.setOption(option7)
+          option8&&mychart8.setOption(option8)
+          option9&&mychart9.setOption(option9)
+          option10&&mychart10.setOption(option10)
+          option11&&mychart11.setOption(option11)
+          option12&&mychart12.setOption(option12)
+          option13&&mychart13.setOption(option13)
+          
+
+
+  })
+
+
+   
 
     }
     render(){
@@ -214,21 +1035,67 @@ class showdata extends React.Component{
                 <Row>
                     <Col span={12}>
                         <br/>
-                        <div style={{textAlign:'center', width:'600px',height:'400px'}} id="line2"></div>
+                        <div style={{textAlign:'center', width:'600px',height:'400px'}} id="ax"></div>
                     </Col>
                     <Col span={12}>
                         <br/>
-                        <div style={{textAlign:'center', width:'600px',height:'400px'}} id="line3"></div>
+                        <div style={{textAlign:'center', width:'600px',height:'400px'}} id="ay"></div>
                     </Col>
                 </Row>
                 <Row>
                     <Col span={12}>
                         <br/>
-                        <div style={{textAlign:'center', width:'600px',height:'400px'}} id="line4"></div>
+                        <div style={{textAlign:'center', width:'600px',height:'400px'}} id="az"></div>
                     </Col>
                     <Col span={12}>
                         <br/>
-                        <div style={{textAlign:'center', width:'600px',height:'400px'}} id="line5"></div>
+                        <div style={{textAlign:'center', width:'600px',height:'400px'}} id="wx"></div>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col span={12}>
+                        <br/>
+                        <div style={{textAlign:'center', width:'600px',height:'400px'}} id="wy"></div>
+                    </Col>
+                    <Col span={12}>
+                        <br/>
+                        <div style={{textAlign:'center', width:'600px',height:'400px'}} id="wz"></div>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col span={12}>
+                        <br/>
+                        <div style={{textAlign:'center', width:'600px',height:'400px'}} id="anglex"></div>
+                    </Col>
+                    <Col span={12}>
+                        <br/>
+                        <div style={{textAlign:'center', width:'600px',height:'400px'}} id="angley"></div>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col span={12}>
+                        <br/>
+                        <div style={{textAlign:'center', width:'600px',height:'400px'}} id="anglez"></div>
+                    </Col>
+                    <Col span={12}>
+                        <br/>
+                        <div style={{textAlign:'center', width:'600px',height:'400px'}} id="q0"></div>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col span={12}>
+                        <br/>
+                        <div style={{textAlign:'center', width:'600px',height:'400px'}} id="q1"></div>
+                    </Col>
+                    <Col span={12}>
+                        <br/>
+                        <div style={{textAlign:'center', width:'600px',height:'400px'}} id="q2"></div>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col span={12}>
+                        <br/>
+                        <div style={{textAlign:'center', width:'600px',height:'400px'}} id="q3"></div>
                     </Col>
                 </Row>
                 <br/>

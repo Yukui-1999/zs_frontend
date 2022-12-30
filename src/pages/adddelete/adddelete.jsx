@@ -17,6 +17,10 @@ class adddelete extends React.Component{
         spin:true,
         
     }
+    lable=['静止，不转，大瓶，空瓶','逆时针转，快速，大瓶，空瓶','逆时针转，快速，大瓶，空瓶',
+  '逆时针转，慢速，大瓶，空瓶','逆时针转，慢速，大瓶，满水','逆时针转，慢速，小瓶，空瓶',
+'逆时针转，慢速，小瓶，满水','顺时针转，快速，大瓶，空瓶','顺时针转，快速，小瓶，空瓶','顺时针转，慢速，大瓶，空瓶',
+'顺时针转，慢速，大瓶，满水','顺时针转，慢速，小瓶，空瓶','顺时针转，慢速，小瓶，满水']
 
     isModalOpen = e =>{
         this.setState({ModalOpen:true})
@@ -127,7 +131,7 @@ class adddelete extends React.Component{
           key: 'state',
           width:'25%',
           align:'center',
-          render:(text) =><Tag  color={text==='normal'?'green':'red'}>{text}</Tag>
+          render:(text) =><Tag>{this.lable[text-1]}</Tag>
         },
         {
             title: '删除',

@@ -9,6 +9,10 @@ class allmachine extends React.Component{
       data:[],
       spin:true,
     }
+    lable=['静止，不转，大瓶，空瓶','逆时针转，快速，大瓶，空瓶','逆时针转，快速，大瓶，空瓶',
+  '逆时针转，慢速，大瓶，空瓶','逆时针转，慢速，大瓶，满水','逆时针转，慢速，小瓶，空瓶',
+'逆时针转，慢速，小瓶，满水','顺时针转，快速，大瓶，空瓶','顺时针转，快速，小瓶，空瓶','顺时针转，慢速，大瓶，空瓶',
+'顺时针转，慢速，大瓶，满水','顺时针转，慢速，小瓶，空瓶','顺时针转，慢速，小瓶，满水']
     todetail =e =>{
       console.log(e)
       this.props.history.push({ pathname : '/index/detail' , state : { 
@@ -82,7 +86,7 @@ class allmachine extends React.Component{
           title: '最新运行状态',
           dataIndex: 'state',
           key: 'state',
-          render:(text) =><Tag  color={text==='normal'?'green':'red'}>{text}</Tag>
+          render:(text) =><Tag>{this.lable[text-1]}</Tag>
         },
         {
           title: '详情',

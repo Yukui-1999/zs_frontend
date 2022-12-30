@@ -1,7 +1,7 @@
 import React from "react";
 import { Layout, Menu,Button,message,Form,Modal,Input } from 'antd';
 import {Route, Switch, Redirect, Link} from 'react-router-dom';
-import {PieChartOutlined,DatabaseOutlined,UserOutlined,EyeInvisibleOutlined,EyeTwoTone,LockOutlined} from '@ant-design/icons';
+import {PieChartOutlined,DatabaseOutlined,UserOutlined,MenuOutlined ,LineChartOutlined,LockOutlined,ProfileOutlined,FormOutlined} from '@ant-design/icons';
 import homepage from "../homepage/homepage";
 import "./Index.css"
 import 'antd/dist/reset.css';
@@ -273,7 +273,7 @@ handlesubmit=e=>{
           <div className="logo">工程机械监管平台</div>
           <Menu theme="dark"  mode="inline" selectedKeys={this.props.location.pathname}
           >
-            <Menu.Item key="/index/homepage" icon={<DatabaseOutlined />}>
+            <Menu.Item key="/index/homepage" icon={<MenuOutlined />}>
                 <Link to="/index/homepage">
                 首页
                 </Link>
@@ -283,17 +283,15 @@ handlesubmit=e=>{
                 全部
                 </Link>
             </Menu.Item>
-            <Menu.Item key="/index/detail" icon={<UserOutlined />}>
+            <Menu.Item key="/index/detail" icon={<ProfileOutlined />}>
                 详情
             </Menu.Item>
-            <Menu.Item key="/index/showdata" icon={<UserOutlined />}>
-                <Link to="/index/showdata">
+            <Menu.Item key="/index/showdata" icon={<LineChartOutlined />}>
                 数据展示
-                </Link>
             </Menu.Item>
             
               {this.state.type==='0'?<></>:
-              <Menu.Item key="/index/peoplemanage" icon={<PieChartOutlined />}  >
+              <Menu.Item key="/index/peoplemanage" icon={<UserOutlined />}  >
               <Link to="/index/peoplemanage" >
               人员管理
               </Link>
@@ -301,7 +299,7 @@ handlesubmit=e=>{
               }
       
       {this.state.type==='0'?<></>:
-            <Menu.Item key="/index/adddelete" icon={<PieChartOutlined />} >
+            <Menu.Item key="/index/adddelete" icon={<FormOutlined />} >
             <Link to="/index/adddelete" >
                 设备增删
                 </Link>

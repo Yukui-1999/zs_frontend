@@ -200,7 +200,6 @@ class peoplemanage extends React.Component{
                 else{
                   console.log(data.data)
                 }
-
           }).then(()=>{
             this.setState({
                 spin:false,

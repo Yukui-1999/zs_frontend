@@ -331,7 +331,7 @@ handlesubmit=e=>{
               </Switch>
             </div>
           </Content>
-          <Footer style={{ textAlign: 'center' }}>Image data annotation ©2021 Created by dzy</Footer>
+          <Footer style={{ textAlign: 'center' }}>Collateral control system ©2023 Created by dzy</Footer>
         </Layout>
       </Layout>
       </div>

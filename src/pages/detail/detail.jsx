@@ -36,7 +36,7 @@ class detail extends React.Component{
       }
     
       componentDidMount(){  
-        let lable=['静止，不转，大瓶，空瓶','逆时针转，快速，大瓶，空瓶','逆时针转，快速，大瓶，空瓶',
+        let lable=['逆时针转，快速，大瓶，空瓶','逆时针转，快速，小瓶，空瓶',
       '逆时针转，慢速，大瓶，空瓶','逆时针转，慢速，大瓶，满水','逆时针转，慢速，小瓶，空瓶',
     '逆时针转，慢速，小瓶，满水','顺时针转，快速，大瓶，空瓶','顺时针转，快速，小瓶，空瓶','顺时针转，慢速，大瓶，空瓶',
     '顺时针转，慢速，大瓶，满水','顺时针转，慢速，小瓶，空瓶','顺时针转，慢速，小瓶，满水']
@@ -147,7 +147,7 @@ class detail extends React.Component{
                    <br/>
                    <div style={{fontSize:'18px'}}>{this.state.sensor}</div>
                    <br/>
-                   <a href="http://localhost:8080/index/load" download="file">下载文件</a>
+                   <a href="http://localhost:8080/index/load?id=123" download="file">下载文件</a>
                    {/* <Button type="primary" ghost size="large">下载近期原始数据</Button> */}
 
                 </Col>
@@ -163,7 +163,7 @@ class detail extends React.Component{
                 <div style={{textAlign:'center'}}>
                     <br/>
                     <Button size="large" type="primary" ghost>
-                        <Link to='/index/showdata'>点击查看更多</Link>
+                        <Link to={{pathname:'/index/showdata',state:{id:this.state.id}}}>点击查看更多</Link>
                     </Button>
                 </div>
                 <br/><br/>

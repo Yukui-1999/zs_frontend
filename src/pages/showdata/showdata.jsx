@@ -6,7 +6,9 @@ import { Link} from 'react-router-dom';
 import * as echarts from 'echarts'; 
 class showdata extends React.Component{
 
-    
+    state={
+      id:this.props.location.state.id,
+    }
    
  
    componentDidMount(){  
@@ -66,7 +68,7 @@ class showdata extends React.Component{
    let that=this
     let ax,ay,az,wx,wy,wz,anglex,angley,anglez,q0,q1,q2,q3
    axios.post('http://localhost:8080/index/showdata', {
-    msg:111
+    id:this.state.id
 })
   .then(function (response) {
     console.log(response)

@@ -42,7 +42,7 @@ class homepage extends React.Component{
     
     componentDidMount(){  
 
-     let lable=['静止，不转，大瓶，空瓶','逆时针转，快速，大瓶，空瓶','逆时针转，快速，大瓶，空瓶',
+      let lable=['逆时针转，快速，大瓶，空瓶','逆时针转，快速，小瓶，空瓶',
       '逆时针转，慢速，大瓶，空瓶','逆时针转，慢速，大瓶，满水','逆时针转，慢速，小瓶，空瓶',
     '逆时针转，慢速，小瓶，满水','顺时针转，快速，大瓶，空瓶','顺时针转，快速，小瓶，空瓶','顺时针转，慢速，大瓶，空瓶',
     '顺时针转，慢速，大瓶，满水','顺时针转，慢速，小瓶，空瓶','顺时针转，慢速，小瓶，满水']
@@ -63,6 +63,7 @@ class homepage extends React.Component{
                   times=machinedata.time
                   series=machinedata.linevalue
                   series.forEach(function(item,index,self){
+                    console.log(item)
                     item.name=lable[item.name-1]
                     legend[index]=item.name
                     item.stack='Total'

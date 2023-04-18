@@ -5,6 +5,7 @@ import { UploadOutlined } from '@ant-design/icons';
 import axios from 'axios';
 const {TextArea} = Input;
 const {Search}= Input
+
 class adddelete extends React.Component{
     state = {
         ModalOpen:false,
@@ -12,15 +13,17 @@ class adddelete extends React.Component{
         ModalOpen2:false,
         comfirmopen2:false,
         data1:[],
+        data2:[],
         uploadpicurl:'null',
         deleteid:'',
         spin:true,
+        initialID:'1002'
         
     }
-    lable=['静止，不转，大瓶，空瓶','逆时针转，快速，大瓶，空瓶','逆时针转，快速，大瓶，空瓶',
-  '逆时针转，慢速，大瓶，空瓶','逆时针转，慢速，大瓶，满水','逆时针转，慢速，小瓶，空瓶',
-'逆时针转，慢速，小瓶，满水','顺时针转，快速，大瓶，空瓶','顺时针转，快速，小瓶，空瓶','顺时针转，慢速，大瓶，空瓶',
-'顺时针转，慢速，大瓶，满水','顺时针转，慢速，小瓶，空瓶','顺时针转，慢速，小瓶，满水']
+    lable=['逆时针转，快速，大瓶，空瓶','逆时针转，快速，小瓶，空瓶',
+      '逆时针转，慢速，大瓶，空瓶','逆时针转，慢速，大瓶，满水','逆时针转，慢速，小瓶，空瓶',
+    '逆时针转，慢速，小瓶，满水','顺时针转，快速，大瓶，空瓶','顺时针转，快速，小瓶，空瓶','顺时针转，慢速，大瓶，空瓶',
+    '顺时针转，慢速，大瓶，满水','顺时针转，慢速，小瓶，空瓶','顺时针转，慢速，小瓶，满水']
 
     isModalOpen = e =>{
         this.setState({ModalOpen:true})
@@ -108,7 +111,11 @@ class adddelete extends React.Component{
         this.setState({ModalOpen2:false})
     }
     showModal2 = e =>{
-        this.setState({ModalOpen2:true})
+        console.log(e)
+        this.setState({
+          ModalOpen2:true,
+          initialID:e,
+        })
     }
     columns1 = [
         {
@@ -159,11 +166,12 @@ class adddelete extends React.Component{
           align:'center'
         },
         {
-          title: '传感器传来的其他特征',
-          dataIndex: 'feature',
-          key: 'feature',
+          title: '运行状态',
+          dataIndex: 'state',
+          key: 'state',
           width: '30%',
-          align:'center'
+          align:'center',
+          render:(text) =><Tag>{this.lable[text-1]}</Tag>
         },
         {
           title: '添加',
@@ -171,9 +179,9 @@ class adddelete extends React.Component{
           key: 'add',
           width:'40%',
           align:'center',
-          render:() =>
+          render:(text,record) =>
           <div>
-            <Button onClick={this.showModal2}>
+            <Button onClick={this.showModal2.bind(record.id,record.id)}>
             添加
             </Button>
            
@@ -228,6 +236,25 @@ class adddelete extends React.Component{
           }).then(()=>{
             this.setState({
                 data1:data.data,
+                spin:false,
+            })
+          })
+          axios.post('http://localhost:8080/index/machineadd', {
+            msg:111
+        })
+          .then(function (response) {
+            console.log(response)
+             data = response.data
+                if (response.status !== 200){
+                    message.error('出现问题,请联系管理员',3)
+                }
+                else{
+                  console.log(data.data)
+                }
+
+          }).then(()=>{
+            this.setState({
+                data2:data.data,
                 spin:false,
             })
           })
@@ -292,7 +319,10 @@ class adddelete extends React.Component{
                               required: true,
                               message: '请输入要添加的工程机械id!',
                           },
-                      ]}>
+                      ]}
+                        initialValue={this.state.initialID}
+                        hidden={true}
+                      >
                         <Input />
                         </Form.Item>
                         <Form.Item label="机械名称"
@@ -360,10 +390,11 @@ class adddelete extends React.Component{
                 <Divider>
                 <div style={{textAlign:"center",fontSize:"30px"}}>可以添加的工程机械</div>
                 </Divider>
-                <Table columns={this.columns} dataSource={this.data} />
+                <Table columns={this.columns} dataSource={this.state.data2} />
                 
             </div>
         )
     }
 }
+
 export default adddelete
